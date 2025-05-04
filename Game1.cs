@@ -1,45 +1,62 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CoopTanks.Code;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace CoopTanks;
 
+enum State
+{
+    SplashScreen,
+    Game,
+    Final,
+    Pause,
+}
+
 public class Game1 : Game
 {
-    Texture2D tankTexture;
-
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
+    private Player player;
+    State state = State.SplashScreen;
+
 
     public Game1()
     {
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
+        player = new Player(new Vector2(32f, 32f));
     }
 
     protected override void Initialize()
     {
-        // TODO: Add your initialization logic here
         base.Initialize();
     }
 
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-
-
-        // TODO: use this.Content to load your game content here
-        tankTexture = Content.Load<Texture2D>("tankHero (1)");
-
+        SplashScreen.Background = Content.Load<Texture2D>("grass");
+        player.Texture = Content.Load<Texture2D>("tankHero (1)");
     }
 
     protected override void Update(GameTime gameTime)
     {
+        switch (state)
+        {
+            case State.SplashScreen:
+                SplashScreen.Update();
+                if (Keyboard.GetState().IsKeyDown(Keys.Space)) state = State.Game;
+                break;
+            case State.Game:
+                player.Update(gameTime);
+                if (Keyboard.GetState().IsKeyDown(Keys.Escape)) state = State.SplashScreen;
+                break;
+        }
+
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
-
-        // TODO: Add your update logic here
 
         base.Update(gameTime);
     }
@@ -48,10 +65,16 @@ public class Game1 : Game
     {
         GraphicsDevice.Clear(Color.CornflowerBlue);
 
-        // TODO: Add your drawing code here
-
         _spriteBatch.Begin();
-        _spriteBatch.Draw(tankTexture, new Vector2(0, 0), Color.White);
+        switch (state)
+        {
+            case State.SplashScreen:
+                SplashScreen.Draw(_spriteBatch);
+                break;
+            case State.Game:
+                player.Draw(_spriteBatch);
+                break;
+        }
         _spriteBatch.End();
 
         base.Draw(gameTime);
