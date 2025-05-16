@@ -4,10 +4,11 @@ using Microsoft.Xna.Framework.Input;
 
 namespace CoopTanks.Code.GameObjects
 {
+    // Базовый класс для игровых объектов
     public class GameObject
     {
+        public const int TileSize = 32;
         public Vector2 position;
-        public Vector2 previousPosition;
         static public Texture2D Texture { get; set; }
         public bool IsSolid { get; set; } = true;
 
@@ -29,7 +30,5 @@ namespace CoopTanks.Code.GameObjects
                 Texture?.Height ?? 0
             );
         }
-
-        public virtual void OnCollision(GameObject other) { }
     }
 }

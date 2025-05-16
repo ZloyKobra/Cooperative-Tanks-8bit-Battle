@@ -27,7 +27,6 @@ namespace CoopTanks.Code.GameObjects
 
     class Wall : GameObject
     {
-
         public static new Texture2D Texture { get; set; }
 
         public Wall(Vector2 initialPosition) 

@@ -25,6 +25,8 @@ public class Game1 : Game
     private SpriteBatch _spriteBatch;
     private Player player1;
     private Player player2;
+    private List<EnemyTank> _enemies = new List<EnemyTank>();
+    private List<Player> _players = new List<Player>();
     State state = State.SplashScreen;
     private int screenTailsHeight = 16;
     private int screenTailsWidth = 16;
@@ -49,8 +51,11 @@ public class Game1 : Game
     {
 
         player1 = new Player(new Vector2(32, 32), new[] { Keys.W, Keys.S, Keys.A, Keys.D });
-        player2 = new Player(new Vector2(96, 32), new[] { Keys.Up, Keys.Down, Keys.Left, Keys.Right });
+        player2 = new Player(new Vector2(448, 32), new[] { Keys.Up, Keys.Down, Keys.Left, Keys.Right });
+        _players.Add(player1);
+        _players.Add(player2);
 
+        _enemies.Add(new EnemyTank(new Vector2(128, 128), _players));
         Walls.CreateWalls();
         base.Initialize();
     }
@@ -64,6 +69,10 @@ public class Game1 : Game
         Wall.Texture = Content.Load<Texture2D>("wall");
         player1.Texture = Content.Load<Texture2D>("tankHero (1)");
         player2.Texture = Content.Load<Texture2D>("tankHero2 (1)");
+        foreach (var enemy in _enemies)
+        {
+            enemy.Texture = Content.Load<Texture2D>("enemy (1)");
+        }
         // player1._animationUp = new Animation(Content.Load<Texture2D>("Player1/UpAnim"), 4, 0.1f);
     }
 
@@ -76,6 +85,10 @@ public class Game1 : Game
                 if (Keyboard.GetState().IsKeyDown(Keys.Space)) state = State.Game;
                 break;
             case State.Game:
+                foreach (var enemy in _enemies)
+                {
+                    enemy.Update(gameTime);
+                }
                 player1.Update(gameTime);
                 player2.Update(gameTime);
                 if (Keyboard.GetState().IsKeyDown(Keys.Escape)) state = State.SplashScreen;
@@ -110,7 +123,7 @@ public class Game1 : Game
                             1f);
                     }
                 }
-
+                /*
                 // Отрисовка направления движения
                 if (player1.Movement.IsMoving)
                 {
@@ -122,8 +135,23 @@ public class Game1 : Game
                         Color.Red,
                         2f);
                 }
+                if (player2.Movement.IsMoving)
+                {
+                    Vector2 dir = player2.Movement.TargetPosition - player2.position;
+                    dir.Normalize();
+                    _spriteBatch.DrawLine(
+                        player2.position + new Vector2(16, 16),
+                        player2.position + new Vector2(16, 16) + dir * 20,
+                        Color.Red,
+                        2f);
+                }
+                */
                 player1.Draw(_spriteBatch);
                 player2.Draw(_spriteBatch);
+                foreach (var enemy in _enemies)
+                {
+                    enemy.Draw(_spriteBatch);
+                }
                 foreach (var wall in Walls.walls)
                 {
                     wall.Draw(_spriteBatch);
