@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace CoopTanks.Code.GameObjects
 {
@@ -88,8 +89,17 @@ namespace CoopTanks.Code.GameObjects
             {
                 if (enemy != Owner && bulletBounds.Intersects(enemy.GetBounds()))
                 {
-                    Debug.WriteLine($"Пуля попала во врага");
                     OnEnemyHit(enemy);
+                    Destroy();
+                    return;
+                }
+            }
+
+            foreach (var bullet in ActiveBullets.ToList())
+            {
+                if (bullet != this && bulletBounds.Intersects(bullet.GetBounds()))
+                {
+                    bullet.Destroy();
                     Destroy();
                     return;
                 }
@@ -139,7 +149,7 @@ namespace CoopTanks.Code.GameObjects
             Rectangle bounds = GetBounds();
             Color hitboxColor = Color.Red * 0.5f; // Полупрозрачный красный
 
-            // Отрисовываем прямоугольник хитбокса
+            // Отрисовка хитбокса
             spriteBatch.Draw(_debugTexture, new Rectangle(bounds.X, bounds.Y, bounds.Width, 1), hitboxColor); // Верх
             spriteBatch.Draw(_debugTexture, new Rectangle(bounds.X, bounds.Y + bounds.Height - 1, bounds.Width, 1), hitboxColor); // Низ
             spriteBatch.Draw(_debugTexture, new Rectangle(bounds.X, bounds.Y, 1, bounds.Height), hitboxColor); // Лево
@@ -148,9 +158,8 @@ namespace CoopTanks.Code.GameObjects
 
         public void Destroy()
         {
-            // Удаляем пулю из списка активных
-            ActiveBullets.Remove(this);
-
+            // Отмечаем пулю из списка активных
+            IsDestroyed = true;
             // Потом можно добавить эффект уничтожения (анимацию взрыва)
         }
 

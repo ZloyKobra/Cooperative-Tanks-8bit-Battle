@@ -38,7 +38,7 @@ namespace CoopTanks.Code.GameObjects
             if (!CanShoot)
             {
                 float cooldownPercent = _shootCooldown / _shootCooldownTime;
-                Vector2 barPosition = position - new Vector2(16, 30);
+                Vector2 barPosition = position - new Vector2(0, 10);
                 Rectangle backBar = new Rectangle((int)barPosition.X, (int)barPosition.Y, 32, 5);
                 Rectangle cooldownBar = new Rectangle((int)barPosition.X, (int)barPosition.Y,
                     (int)(32 * (1 - cooldownPercent)), 5);
@@ -68,6 +68,11 @@ namespace CoopTanks.Code.GameObjects
             if (!Movement.IsMoving)
             {
                 HandleInput();
+            }
+
+            if (healthPoint <= 0) 
+            {
+                IsDestroyed = true;
             }
         }
 
@@ -137,6 +142,20 @@ namespace CoopTanks.Code.GameObjects
             foreach (var wall in Walls.walls)
             {
                 if (futureBounds.Intersects(wall.GetBounds()))
+                {
+                    return false;
+                }
+            }
+            foreach (var enemy in Enemies.enemies)
+            {
+                if (futureBounds.Intersects(enemy.GetBounds()))
+                {
+                    return false;
+                }
+            }
+            foreach (var player in Players.players)
+            {
+                if (futureBounds.Intersects(player.GetBounds()))
                 {
                     return false;
                 }

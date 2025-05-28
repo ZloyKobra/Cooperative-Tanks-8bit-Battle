@@ -15,7 +15,7 @@ namespace CoopTanks.Code.GameObjects
         private List<Player> _players;
         private float _recalculateCooldown = 1f;
         private const float RecalculateInterval = 2f;
-        private float _shootCooldownTime = 3f;
+        private float _shootCooldownTime = 4f;
         public Texture2D Texture { get; set; }
         public Texture2D TextureUp { get; set; }
         public Texture2D TextureDown { get; set; }
@@ -52,12 +52,10 @@ namespace CoopTanks.Code.GameObjects
             {
                 if (direction.X > 0)
                 {
-                    Texture = TextureUp;
                     Movement.TryMove(MovementState.MovingRight, CanMoveTo);
                 }
                 else
                 {
-                    Texture = TextureUp;
                     Movement.TryMove(MovementState.MovingLeft, CanMoveTo);
                 }
             }
@@ -65,12 +63,10 @@ namespace CoopTanks.Code.GameObjects
             {
                 if (direction.Y > 0)
                 {
-                    Texture = TextureUp;
                     Movement.TryMove(MovementState.MovingDown, CanMoveTo);
                 }
                 else
                 {
-                    Texture = TextureUp;
                     Movement.TryMove(MovementState.MovingUp, CanMoveTo);
                 }
             }
@@ -82,12 +78,10 @@ namespace CoopTanks.Code.GameObjects
                 {
                     if (direction.Y > 0)
                     {
-                        Texture = TextureUp;
                         Movement.TryMove(MovementState.MovingDown, CanMoveTo);
                     }
                     else
                     {
-                        Texture = TextureUp;
                         Movement.TryMove(MovementState.MovingUp, CanMoveTo);
                     }
                 }
@@ -95,12 +89,10 @@ namespace CoopTanks.Code.GameObjects
                 {
                     if (direction.X > 0)
                     {
-                        Texture = TextureUp;
                         Movement.TryMove(MovementState.MovingRight, CanMoveTo);
                     }
                     else
                     {
-                        Texture = TextureUp;
                         Movement.TryMove(MovementState.MovingLeft, CanMoveTo);
                     }
                 }
@@ -121,6 +113,20 @@ namespace CoopTanks.Code.GameObjects
             foreach (var wall in Walls.walls)
             {
                 if (futureBounds.Intersects(wall.GetBounds()))
+                {
+                    return false;
+                }
+            }
+            foreach (var enemy in Enemies.enemies)
+            {
+                if (futureBounds.Intersects(enemy.GetBounds()))
+                {
+                    return false;
+                }
+            }
+            foreach (var player in Players.players)
+            {
+                if (futureBounds.Intersects(player.GetBounds()))
                 {
                     return false;
                 }
@@ -163,6 +169,11 @@ namespace CoopTanks.Code.GameObjects
             {
                 FindPathToNearestPlayer();
                 _recalculateCooldown = RecalculateInterval;
+            }
+
+            if (healthPoint <= 0)
+            {
+                IsDestroyed = true;
             }
         }
 
@@ -258,8 +269,14 @@ namespace CoopTanks.Code.GameObjects
         {
             enemies.Add(enemy);
         }
+
+        public static void CreateEnemies()
+        {
+            AddEnemy(new Enemy(new Vector2(32 * 3, 32 * 3), Players.players));
+            AddEnemy(new Enemy(new Vector2(32 * 20, 32 * 20), Players.players));
+            AddEnemy(new Enemy(new Vector2(32 * 3, 32 * 20), Players.players));
+            AddEnemy(new Enemy(new Vector2(32 * 20, 32 * 3), Players.players));
+        }
     }
-
-
 }
 

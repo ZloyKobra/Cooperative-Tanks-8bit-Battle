@@ -8,22 +8,6 @@ namespace CoopTanks.Code.GameObjects
     class Walls 
     {
         public static List<Wall> walls = new List<Wall>();
-
-        public static void CreateWalls()
-        {
-            // Пример расположения стен
-            for (int x = 0; x < 10; x++)
-            {
-                walls.Add(new Wall(new Vector2(x * 32, 0)));
-                walls.Add(new Wall(new Vector2(x * 32, 9 * 32)));
-            }
-            for (int y = 1; y < 9; y++)
-            {
-                walls.Add(new Wall(new Vector2(0, y * 32)));
-                walls.Add(new Wall(new Vector2(9 * 32, y * 32)));
-            }
-            walls.Add(new Wall(new Vector2(7 * 32, 7 * 32)));
-        }
     }
 
     class Wall : GameObject

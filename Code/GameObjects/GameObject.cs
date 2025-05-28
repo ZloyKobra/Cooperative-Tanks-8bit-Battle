@@ -11,6 +11,7 @@ namespace CoopTanks.Code.GameObjects
         public Vector2 position;
         static public Texture2D Texture { get; set; }
         public bool IsSolid { get; set; } = true;
+        public bool IsDestroyed { get; set; } = false;
 
         private const int Damage = 1;
 
