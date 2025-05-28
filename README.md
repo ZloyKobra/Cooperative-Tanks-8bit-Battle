@@ -19,8 +19,7 @@ Cooperative Tanks - это локальный кооперативный шут�
   - Игрок 2: Стрелки (движение), Right Shift (выстрел)
   
 - **Физика движения танков**  
-<video src='CoopTanks_XSadIiDzJf.mp4' width=180/>
-
+[![Вот видео](https://raw.githubusercontent.com/ZloyKobra/Cooperative-Tanks-8bit-Battle/main/CoopTanks_XSadIiDzJf.mp4)]
 ## ⌨️ Управление
 
 ### Игрок 1 (Жёлтый танк):
