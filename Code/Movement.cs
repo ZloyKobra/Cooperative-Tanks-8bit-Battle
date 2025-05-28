@@ -25,6 +25,8 @@ namespace CoopTanks.Code
 
         public bool IsMoving => State != MovementState.Idle;
 
+        public MovementState lastMove = MovementState.Idle;
+
         public void Update(GameTime gameTime)
         {
             if (!IsMoving) return;

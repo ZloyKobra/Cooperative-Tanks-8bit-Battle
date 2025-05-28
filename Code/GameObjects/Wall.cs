@@ -22,6 +22,7 @@ namespace CoopTanks.Code.GameObjects
                 walls.Add(new Wall(new Vector2(0, y * 32)));
                 walls.Add(new Wall(new Vector2(9 * 32, y * 32)));
             }
+            walls.Add(new Wall(new Vector2(7 * 32, 7 * 32)));
         }
     }
 

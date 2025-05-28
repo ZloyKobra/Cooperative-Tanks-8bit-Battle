@@ -25,8 +25,6 @@ public class Game1 : Game
     private SpriteBatch _spriteBatch;
     private Player player1;
     private Player player2;
-    private List<EnemyTank> _enemies = new List<EnemyTank>();
-    private List<Player> _players = new List<Player>();
     State state = State.SplashScreen;
     private int screenTailsHeight = 16;
     private int screenTailsWidth = 16;
@@ -50,30 +48,47 @@ public class Game1 : Game
     protected override void Initialize()
     {
 
-        player1 = new Player(new Vector2(32, 32), new[] { Keys.W, Keys.S, Keys.A, Keys.D });
-        player2 = new Player(new Vector2(448, 32), new[] { Keys.Up, Keys.Down, Keys.Left, Keys.Right });
-        _players.Add(player1);
-        _players.Add(player2);
-
-        _enemies.Add(new EnemyTank(new Vector2(128, 128), _players));
+        player1 = new Player(new Vector2(32, 32), new[] { Keys.W, Keys.S, Keys.A, Keys.D, Keys.Space });
+        player2 = new Player(new Vector2(448, 32), new[] { Keys.Up, Keys.Down, Keys.Left, Keys.Right, Keys.RightShift });
+        Players.AddPlayer(player1);
+        Players.AddPlayer(player2);
+        Enemies.AddEnemy(new Enemy(new Vector2(128, 128), Players.players));
         Walls.CreateWalls();
         base.Initialize();
     }
-
-    
 
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         SplashScreen.Background = Content.Load<Texture2D>("grass");
         Wall.Texture = Content.Load<Texture2D>("wall");
-        player1.Texture = Content.Load<Texture2D>("tankHero (1)");
-        player2.Texture = Content.Load<Texture2D>("tankHero2 (1)");
-        foreach (var enemy in _enemies)
+
+        player1.Texture = Content.Load<Texture2D>("tankHeroLeft");
+        player1.TextureLeft = Content.Load<Texture2D>("tankHeroLeft");
+        player1.TextureRight = Content.Load<Texture2D>("tankHeroRight");
+        player1.TextureUp = Content.Load<Texture2D>("tankHeroUp");
+        player1.TextureDown = Content.Load<Texture2D>("tankHeroDown");
+
+        player2.Texture = Content.Load<Texture2D>("tankHero2Left");
+        player2.TextureLeft = Content.Load<Texture2D>("tankHero2Left");
+        player2.TextureRight = Content.Load<Texture2D>("tankHero2Right");
+        player2.TextureUp = Content.Load<Texture2D>("tankHero2Up");
+        player2.TextureDown = Content.Load<Texture2D>("tankHero2Down");
+
+        Bullet.Texture = Content.Load<Texture2D>("bullet");
+        foreach (var enemy in Enemies.enemies)
         {
-            enemy.Texture = Content.Load<Texture2D>("enemy (1)");
+            enemy.Texture = Content.Load<Texture2D>("enemyLeft");
+            enemy.TextureLeft = Content.Load<Texture2D>("enemyLeft");
+            enemy.TextureRight = Content.Load<Texture2D>("enemyRight");
+            enemy.TextureUp = Content.Load<Texture2D>("enemyUp");
+            enemy.TextureDown = Content.Load<Texture2D>("enemyDown");
         }
-        // player1._animationUp = new Animation(Content.Load<Texture2D>("Player1/UpAnim"), 4, 0.1f);
+
+        // Отрисовка Хитбокса пули отдельно от текстуры
+        Bullet.LoadDebugTexture(GraphicsDevice);
+        //Enemy.LoadDebugTexture(GraphicsDevice);
+        //Player.LoadDebugTexture(GraphicsDevice);
     }
 
     protected override void Update(GameTime gameTime)
@@ -85,12 +100,17 @@ public class Game1 : Game
                 if (Keyboard.GetState().IsKeyDown(Keys.Space)) state = State.Game;
                 break;
             case State.Game:
-                foreach (var enemy in _enemies)
+                for (int i = Bullet.ActiveBullets.Count - 1; i >= 0; i--)
+                {
+                    Bullet.ActiveBullets[i].Update(gameTime);
+                }
+                foreach (var enemy in Enemies.enemies)
                 {
                     enemy.Update(gameTime);
                 }
                 player1.Update(gameTime);
                 player2.Update(gameTime);
+                // Обновляем все активные пули
                 if (Keyboard.GetState().IsKeyDown(Keys.Escape)) state = State.SplashScreen;
                 break;
         }
@@ -148,7 +168,7 @@ public class Game1 : Game
                 */
                 player1.Draw(_spriteBatch);
                 player2.Draw(_spriteBatch);
-                foreach (var enemy in _enemies)
+                foreach (var enemy in Enemies.enemies)
                 {
                     enemy.Draw(_spriteBatch);
                 }
@@ -156,10 +176,14 @@ public class Game1 : Game
                 {
                     wall.Draw(_spriteBatch);
                 }
+                foreach (var bullet in Bullet.ActiveBullets)
+                {
+                    bullet.Draw(_spriteBatch);
+                }
                 break;
         }
-        _spriteBatch.End();
-
         base.Draw(gameTime);
+
+        _spriteBatch.End();   
     }
 }
